@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
-type Query = 'General Enquiry' | 'Support Request';
+type Query = 'General Enquiry' | 'Support Request' | '';
 
 type FormValues = {
   firstName: string;
@@ -30,7 +30,7 @@ const Form: React.FC = () => {
     query: yup
       .string()
       .oneOf(
-        ['General Enquiry', 'Support Request'],
+        ['General Enquiry', 'Support Request', ''],
         'Please select a query type.'
       )
       .required('Please select a query type.'),
@@ -38,19 +38,27 @@ const Form: React.FC = () => {
     message: yup.string().required('This field is required'),
     consent: yup
       .boolean()
-      .required('To submit this form, please consent to being contacted')
-      .default(false),
+      .oneOf([true], 'You must consent to continue')
+      .required(),
   });
 
   const {
     register,
     handleSubmit,
     setValue,
-    getValues,
     trigger,
+    watch,
     formState: { errors },
   } = useForm<FormValues>({
-    resolver: yupResolver(schema), // Use Yup schema for validation
+    resolver: yupResolver(schema),
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      query: '',
+      message: '',
+      consent: false,
+    },
   });
 
   const handleSuccess = () => {
@@ -98,7 +106,7 @@ const Form: React.FC = () => {
               type='text'
               id='lastName'
               {...register('lastName')}
-              className={`block border-[1px] hover:cursor-pointer  mt-2 h-10 w-full rounded-lg  px-3 py-1 focus:border-green-600 focus:outline-none ${
+              className={`block border-[1px] mt-2 h-10 w-full rounded-lg  px-3 py-1 focus:border-green-600 focus:outline-none ${
                 errors.lastName ? 'border-red' : 'border-grey-500'
               }`}
             />
@@ -113,7 +121,7 @@ const Form: React.FC = () => {
             type='text'
             id='email'
             {...register('email')}
-            className={`block border-[1px]  hover:cursor-pointer mt-2 h-10 w-full rounded-lg px-3 py-1 focus:border-green-600 focus:outline-none ${
+            className={`block border-[1px]   mt-2 h-10 w-full rounded-lg px-3 py-1 focus:border-green-600 focus:outline-none ${
               errors.email ? 'border-red' : 'border-grey-500'
             }`}
           />
@@ -125,14 +133,17 @@ const Form: React.FC = () => {
           </p>
           <RadioGroup
             className='mt-2'
-            // value={getValues('query')}
             onValueChange={(value) => {
               setValue('query', value as Query);
               trigger('query');
             }}
           >
             <label
-              className='inline-flex w-full  h-11 items-center rounded-lg border-[1px] border-grey-500 px-4 py-1 hover:cursor-pointer'
+              className={`inline-flex w-full  h-11 items-center rounded-lg border-[1px]  px-4 py-1 ${
+                watch('query') === 'General Enquiry'
+                  ? 'border-green-600 bg-green-200'
+                  : 'border-grey-500'
+              }`}
               htmlFor='general'
             >
               <RadioGroupItem
@@ -144,7 +155,11 @@ const Form: React.FC = () => {
               <span className='text-[13px] text-grey-900'>General Enquiry</span>
             </label>
             <label
-              className='inline-flex w-full  h-11 items-center rounded-lg border-[1px] border-grey-500 px-4 py-1 hover:cursor-pointer'
+              className={`inline-flex w-full  h-11 items-center rounded-lg border-[1px]  px-4 py-1 ${
+                watch('query') === 'Support Request'
+                  ? 'border-green-600 bg-green-200'
+                  : 'border-grey-500'
+              }`}
               htmlFor='support'
             >
               <RadioGroupItem
@@ -166,7 +181,7 @@ const Form: React.FC = () => {
             rows={4}
             id='message'
             {...register('message')}
-            className={`block w-full rounded-lg border-[1px]  hover:cursor-pointer mt-2 p-3 focus:border-green-600 focus:outline-none ${
+            className={`block w-full rounded-lg border-[1px]  mt-2 p-3 focus:border-green-600 focus:outline-none ${
               errors.message ? 'border-red' : 'border-grey-500'
             }`}
           ></textarea>
@@ -175,13 +190,17 @@ const Form: React.FC = () => {
         <div className=' items-center inline-flex gap-3'>
           <Checkbox
             id='consent'
-            checked={getValues('consent')}
-            onCheckedChange={(checked) => setValue('consent', checked === true)}
+            onCheckedChange={(checked) => {
+              setValue('consent', checked === true);
+              trigger('consent');
+            }}
           />
-          <label className='text-[13px] text-grey-900' htmlFor='consent'>
-            I consent to being contacted by the team<span>*</span>
-          </label>
-          <span className='text-xs text-red'>{errors.consent?.message}</span>
+          <div className='flex flex-col gap-1'>
+            <label className='text-[13px] text-grey-900' htmlFor='consent'>
+              I consent to being contacted by the team<span>*</span>
+            </label>
+            <span className=' text-xs text-red'>{errors.consent?.message}</span>
+          </div>
         </div>
         <button
           type='submit'
