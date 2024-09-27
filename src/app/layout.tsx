@@ -1,6 +1,6 @@
 import './globals.css';
 import { Karla } from 'next/font/google';
-
+import { Toaster } from '@/components/ui';
 const karla = Karla({
   subsets: ['latin'],
   variable: '--font-karla',
@@ -18,6 +18,7 @@ export default function RootLayout({
           <h1>Contact Form</h1>
         </header>
         {children}
+        <Toaster />
       </body>
     </html>
   );

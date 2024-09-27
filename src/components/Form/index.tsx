@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { useToast } from '@/hooks/use-toast';
 import { RadioGroup, RadioGroupItem } from '../ui/RadioGroup';
 import { Checkbox } from '../ui';
 import { useForm } from 'react-hook-form';
@@ -18,6 +19,7 @@ type FormValues = {
 };
 
 const Form: React.FC = () => {
+  const { toast } = useToast();
   const schema = yup.object().shape({
     firstName: yup.string().required('This field is required'),
     lastName: yup.string().required('This field is required'),
@@ -51,11 +53,20 @@ const Form: React.FC = () => {
     resolver: yupResolver(schema), // Use Yup schema for validation
   });
 
+  const handleSuccess = () => {
+    toast({
+      title: 'Message Sent!',
+      description: "Thanks for completing the form. We'll be in touch soon!",
+    });
+    console.log('success');
+  };
+
   console.log(errors);
   // Form submit handler
   const onSubmit = (data: FormValues) => {
     console.log('yesss');
     console.log(data);
+    handleSuccess();
   };
 
   return (
@@ -75,7 +86,9 @@ const Form: React.FC = () => {
                 errors.firstName ? 'border-red' : 'border-grey-500'
               }`}
             />
-            <span className='text-red'>{errors.firstName?.message}</span>
+            <span className='text-xs text-red'>
+              {errors.firstName?.message}
+            </span>
           </div>
           <div className='my-2 flex-1'>
             <label htmlFor='lastName' className='text-xs text-grey-900'>
@@ -85,9 +98,11 @@ const Form: React.FC = () => {
               type='text'
               id='lastName'
               {...register('lastName')}
-              className='block border-[1px] hover:cursor-pointer  mt-2 h-10 w-full rounded-lg border-grey-500 px-3 py-1 focus:border-green-600 focus:outline-none'
+              className={`block border-[1px] hover:cursor-pointer  mt-2 h-10 w-full rounded-lg  px-3 py-1 focus:border-green-600 focus:outline-none ${
+                errors.lastName ? 'border-red' : 'border-grey-500'
+              }`}
             />
-            <span className='text-red'>{errors.lastName?.message}</span>
+            <span className='text-xs text-red'>{errors.lastName?.message}</span>
           </div>
         </div>
         <div className='my-2'>
@@ -98,9 +113,11 @@ const Form: React.FC = () => {
             type='text'
             id='email'
             {...register('email')}
-            className='block border-[1px] border-grey-500 hover:cursor-pointer mt-2 h-10 w-full rounded-lg px-3 py-1 focus:border-green-600 focus:outline-none'
+            className={`block border-[1px]  hover:cursor-pointer mt-2 h-10 w-full rounded-lg px-3 py-1 focus:border-green-600 focus:outline-none ${
+              errors.email ? 'border-red' : 'border-grey-500'
+            }`}
           />
-          <span className='text-red'>{errors.email?.message}</span>
+          <span className='text-xs text-red'>{errors.email?.message}</span>
         </div>
         <div className=''>
           <p className='text-xs text-grey-900'>
@@ -108,7 +125,7 @@ const Form: React.FC = () => {
           </p>
           <RadioGroup
             className='mt-2'
-            value={getValues('query')}
+            // value={getValues('query')}
             onValueChange={(value) => {
               setValue('query', value as Query);
               trigger('query');
@@ -139,7 +156,7 @@ const Form: React.FC = () => {
               <span className='text-[13px] text-grey-900'>Support Request</span>
             </label>
           </RadioGroup>
-          <span className='text-red'>{errors.query?.message}</span>
+          <span className='text-xs text-red'>{errors.query?.message}</span>
         </div>
         <div className='my-2'>
           <label htmlFor='message' className='text-xs text-grey-900'>
@@ -149,9 +166,11 @@ const Form: React.FC = () => {
             rows={4}
             id='message'
             {...register('message')}
-            className='block w-full rounded-lg border-[1px] border-grey-500 hover:cursor-pointer mt-2 p-3 focus:border-green-600 focus:outline-none'
+            className={`block w-full rounded-lg border-[1px]  hover:cursor-pointer mt-2 p-3 focus:border-green-600 focus:outline-none ${
+              errors.message ? 'border-red' : 'border-grey-500'
+            }`}
           ></textarea>
-          <span className='text-red'>{errors.message?.message}</span>
+          <span className='text-xs text-red'>{errors.message?.message}</span>
         </div>
         <div className=' items-center inline-flex gap-3'>
           <Checkbox
@@ -162,7 +181,7 @@ const Form: React.FC = () => {
           <label className='text-[13px] text-grey-900' htmlFor='consent'>
             I consent to being contacted by the team<span>*</span>
           </label>
-          <span className='text-red'>{errors.consent?.message}</span>
+          <span className='text-xs text-red'>{errors.consent?.message}</span>
         </div>
         <button
           type='submit'
