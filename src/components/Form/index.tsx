@@ -5,15 +5,14 @@ import { RadioGroup, RadioGroupItem } from '../ui/RadioGroup';
 import { Checkbox } from '../ui';
 import { useFormik, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { error } from 'console';
 
-type Query = 'General Enquiry' | 'Support Request' | '';
+// type Query = 'General Enquiry' | 'Support Request' | '';
 
 type FormValues = {
   firstName: string;
   lastName: string;
   email: string;
-  query: Query;
+  query: '';
   message: string;
   consent: boolean;
 };
@@ -35,16 +34,16 @@ const Forms: React.FC = () => {
       email: Yup.string()
         .required('Email is required')
         .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email format'),
-      // query: Yup.string()
-      //   .oneOf(
-      //     ['General Enquiry', 'Support Request', ''],
-      //     'Please select a query type.'
-      //   )
-      //   .required('Please select a query type.'),
+      query: Yup.string()
+        .oneOf(
+          ['General Enquiry', 'Support Request'],
+          'Please select a query type.'
+        )
+        .required('Please select a query type.'),
       message: Yup.string().required('This field is required'),
-      // consent: Yup.boolean()
-      //   .oneOf([true], 'You must consent to continue')
-      //   .required(),
+      consent: Yup.boolean()
+        .oneOf([true], 'You must consent to continue')
+        .required(),
     }),
     onSubmit: (values) => {
       console.log(values);
@@ -52,15 +51,7 @@ const Forms: React.FC = () => {
     },
   });
 
-  // const initialValues: FormValues = {
-  //   firstName: '',
-  //   lastName: '',
-  //   email: '',
-  //   query: '',
-  //   message: '',
-  //   consent: false,
-  // };
-
+  console.log(formik.errors);
   const handleSuccess = () => {
     toast({
       title: 'Message Sent!',
@@ -68,12 +59,6 @@ const Forms: React.FC = () => {
     });
     console.log('success');
   };
-
-  // const handleSubmit = (values: FormikValues, { setSubmitting }: any) => {
-  //   setSubmitting(false);
-  //   console.log(values);
-  //   handleSuccess();
-  // };
 
   return (
     <form onSubmit={formik.handleSubmit} className=' w-full my-10 sm:my-0'>
@@ -197,11 +182,9 @@ const Forms: React.FC = () => {
             <label className='text-[13px] text-grey-900' htmlFor='consent'>
               I consent to being contacted by the team<span>*</span>
             </label>
-            {/* <ErrorMessage
-              name='consent'
-              component='span'
-              className='text-xs text-red'
-            /> */}
+            {formik.touched.consent && formik.errors.consent ? (
+              <span className='text-xs text-red'>{formik.errors.consent}</span>
+            ) : null}
           </div>
         </div>
         <button
