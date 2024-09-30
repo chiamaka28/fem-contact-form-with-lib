@@ -3,19 +3,8 @@ import React from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { RadioGroup, RadioGroupItem } from '../ui/RadioGroup';
 import { Checkbox } from '../ui';
-import { useFormik, Field, ErrorMessage } from 'formik';
+import { useFormik } from 'formik';
 import * as Yup from 'yup';
-
-// type Query = 'General Enquiry' | 'Support Request' | '';
-
-type FormValues = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  query: '';
-  message: string;
-  consent: boolean;
-};
 
 const Forms: React.FC = () => {
   const { toast } = useToast();
@@ -51,7 +40,6 @@ const Forms: React.FC = () => {
     },
   });
 
-  console.log(formik.errors);
   const handleSuccess = () => {
     toast({
       title: 'Message Sent!',
@@ -122,7 +110,7 @@ const Forms: React.FC = () => {
           </p>
           <RadioGroup
             className='mt-2'
-            value={formik.values.query} // Control the value from Formik
+            value={formik.values.query}
             onValueChange={(value) => formik.setFieldValue('query', value)}
           >
             <label
