@@ -7,13 +7,13 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
-type Query = 'General Enquiry' | 'Support Request' | '';
+type TQuery = 'General Enquiry' | 'Support Request' | '';
 
 type FormValues = {
   firstName: string;
   lastName: string;
   email: string;
-  query: Query;
+  query: TQuery;
   message: string;
   consent: boolean;
 };
@@ -90,7 +90,7 @@ const Form: React.FC = () => {
               type='text'
               id='firstName'
               {...register('firstName')}
-              className={`block border-[1px] focus:border-1 mt-2 h-10 w-full rounded-lg  px-3 py-1 focus:border-green-600 focus:outline-none ${
+              className={`block border-[1px] focus:border-1 mt-2 h-10 w-full rounded-lg  px-3 py-1 text-grey-900 focus:border-green-600 focus:outline-none ${
                 errors.firstName ? 'border-red' : 'border-grey-500'
               }`}
             />
@@ -106,7 +106,7 @@ const Form: React.FC = () => {
               type='text'
               id='lastName'
               {...register('lastName')}
-              className={`block border-[1px] mt-2 h-10 w-full rounded-lg  px-3 py-1 focus:border-green-600 focus:outline-none ${
+              className={`block border-[1px] mt-2 h-10 w-full rounded-lg  px-3 py-1 text-grey-900 focus:border-green-600 focus:outline-none ${
                 errors.lastName ? 'border-red' : 'border-grey-500'
               }`}
             />
@@ -121,7 +121,7 @@ const Form: React.FC = () => {
             type='text'
             id='email'
             {...register('email')}
-            className={`block border-[1px]   mt-2 h-10 w-full rounded-lg px-3 py-1 focus:border-green-600 focus:outline-none ${
+            className={`block border-[1px]   mt-2 h-10 w-full rounded-lg px-3 py-1 text-grey-900 focus:border-green-600 focus:outline-none ${
               errors.email ? 'border-red' : 'border-grey-500'
             }`}
           />
@@ -134,7 +134,7 @@ const Form: React.FC = () => {
           <RadioGroup
             className='mt-2'
             onValueChange={(value) => {
-              setValue('query', value as Query);
+              setValue('query', value as TQuery);
               trigger('query');
             }}
           >
@@ -181,7 +181,7 @@ const Form: React.FC = () => {
             rows={4}
             id='message'
             {...register('message')}
-            className={`block w-full rounded-lg border-[1px]  mt-2 p-3 focus:border-green-600 focus:outline-none ${
+            className={`block w-full rounded-lg border-[1px]  mt-2 p-3 text-grey-900 focus:border-green-600 focus:outline-none ${
               errors.message ? 'border-red' : 'border-grey-500'
             }`}
           ></textarea>
